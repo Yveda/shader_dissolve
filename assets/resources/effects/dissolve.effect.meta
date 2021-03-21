@@ -1,0 +1,11 @@
+{
+  "ver": "1.0.15",
+  "uuid": "b558a4e7-8a12-4db6-af2b-9176c403b6b6",
+  "compiledShaders": [
+    {
+      "vert": "\n#define _IS_VERT_SHADER 1\n \nprecision highp float;\nuniform mat4 cc_matViewProj; \n\nattribute vec3 a_position; \nattribute lowp vec4 a_color; \nattribute mediump vec2 a_uv0; \n\nvarying mediump vec2 v_uv0; \nvarying lowp vec4 v_color;  \n\nvoid main () {\n  mat4 mvp; \n  mvp = cc_matViewProj; \n  \n  v_uv0 = a_uv0; \n  v_color = a_color; \n  \n  gl_Position = mvp * vec4(a_position, 1); \n}\n\n\n",
+      "frag": "\n#define _IS_FRAG_SHADER 1\n \nprecision highp float; \n\nuniform sampler2D texture; \nuniform float time; \nuniform sampler2D nosie_tex; \n\nvarying mediump vec2 v_uv0; \nvarying lowp vec4 v_color;  \n\nvoid main () {\n  vec4 color = v_color;\n  float value = texture2D(nosie_tex, v_uv0).r; \n  if (value < time) {\n    discard;\n  }\n  color *= texture2D(texture, v_uv0);\n  if (value < time + 0.05) {\n\tcolor = vec4(0.9, 0.6, 0.3, color.a);\n  }\n  \n  \n  gl_FragColor = color; \n}\n\n\n"
+    }
+  ],
+  "subMetas": {}
+}

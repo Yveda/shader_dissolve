@@ -1,0 +1,16 @@
+{
+  "__type__": "cc.Material",
+  "_name": "",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "b558a4e7-8a12-4db6-af2b-9176c403b6b6"
+  },
+  "_defines": {},
+  "_props": {
+    "nosie_tex": {
+      "__uuid__": "393807c4-6521-436e-b760-9c58994d0ee9"
+    },
+    "time": 0.5
+  }
+}

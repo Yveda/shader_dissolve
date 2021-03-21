@@ -1,0 +1,83 @@
+%{ // 开始
+  techniques: [
+    {
+      passes: [
+        { // pass ---> 完成的渲染流水线;
+          vert: vs
+          frag: fs
+          cullMode: none
+          blend: true
+        }
+      ]
+      layer: 0
+    }
+  ]
+  properties: {
+    texture: {
+      type: sampler2D
+      value: null
+    }
+	
+	nosie_tex: {
+      type: sampler2D
+      value: null
+    }
+	
+	time: {
+	  type: number
+	  value: 0
+	}
+  }
+%} // end
+
+%% vs { // GLSL
+precision highp float;
+uniform mat4 cc_matViewProj; // 程序更具节点位置生成的变换矩阵;
+
+// 顶点Shader 从渲染管道里面获取哪些数据;
+attribute vec3 a_position; // 顶点坐标
+attribute lowp vec4 a_color; // 颜色;
+attribute mediump vec2 a_uv0; // 纹理坐标;
+
+varying mediump vec2 v_uv0; // 传递给着色Shader;  varying 来修饰;
+varying lowp vec4 v_color;  // 传递给着色Shader, varying来修饰;
+
+
+void main () {
+  mat4 mvp; // 定义了一个矩阵;
+  mvp = cc_matViewProj; // modle to 透视的变换矩阵;
+  
+  v_uv0 = a_uv0; // 把顶点纹理坐标，传递给我们的着色Shader;
+  v_color = a_color; // 把顶点的颜色传递给我们的着色Shader;
+  
+  gl_Position = mvp * vec4(a_position, 1); // 将我们模型顶点的坐标变换以后，---》返回给渲染通道;
+}
+
+} // end vs
+
+%% fs { // GLSL
+precision highp float; // 定义了我们的float的精度;
+
+uniform sampler2D texture; // CPU给我们指定的纹理对象; Sprite组件会设置进来;
+uniform float time; // 阀值;
+uniform sampler2D nosie_tex; //
+
+varying mediump vec2 v_uv0; // vert定义了，着色也要定义，而且是同名的;
+varying lowp vec4 v_color;  
+
+void main () {
+  vec4 color = v_color;
+  float value = texture2D(nosie_tex, v_uv0).r; 
+  if (value < time) {
+    discard;
+  }
+  color *= texture2D(texture, v_uv0);
+  if (value < time + 0.05) {
+	color = vec4(0.9, 0.6, 0.3, color.a);
+  }
+  
+  
+  gl_FragColor = color; // 将颜色返回给渲染管道,  gl_FragColor 固定的;
+}
+
+}
